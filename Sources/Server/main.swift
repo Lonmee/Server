@@ -18,12 +18,17 @@ createTable()
 //    * Serves static files out of the "./webroot"
 //        directory (which must be located in the current working directory).
 //    * Performs content compression on outgoing data when appropriate.
-var routes = Routes()
-routes.add(method: .get, uri: "/", handler: handler)
-routes.add(method: .get, uri: "/**",
-           handler: StaticFileHandler(documentRoot: "./webroot", allowResponseFilters: true).handleRequest)
-try HTTPServer.launch(name: "localhost",
-                      port: 8181,
-                      routes: routes,
-                      responseFilters: [
-                        (PerfectHTTPServer.HTTPFilter.contentCompression(data: [:]), HTTPFilterPriority.high)])
+
+do {
+    var routes = Routes()
+    routes.add(method: .get, uri: "/", handler: handler)
+    routes.add(method: .get, uri: "/**",
+               handler: StaticFileHandler(documentRoot: "./webroot", allowResponseFilters: true).handleRequest)
+    try HTTPServer.launch(name: "localhost",
+                          port: 8181,
+                          routes: routes,
+                          responseFilters: [
+                            (PerfectHTTPServer.HTTPFilter.contentCompression(data: [:]), HTTPFilterPriority.high)])
+} catch {
+    fatalError("\(error)")
+}
