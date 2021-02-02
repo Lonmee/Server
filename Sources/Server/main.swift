@@ -6,12 +6,10 @@ import PerfectHTTPServer
 func handler(request: HTTPRequest, response: HTTPResponse) {
     // Respond with a simple message.
     response.setHeader(.contentType, value: "text/html")
-    response.appendBody(string: "<html><title>Hello, world!</title><body>Hello, world!</body></html>")
+    response.appendBody(string: "<html><title>Hello, PerfectHTTP!</title><body>Hello, PerfectHTTP!</body></html>")
     // Ensure that response.completed() is called when your processing is done.
     response.completed()
 }
-
-createTable()
 
 // Configure one server which:
 //    * Serves the hello world message at <host>:<port>/
@@ -22,13 +20,14 @@ createTable()
 do {
     var routes = Routes()
     routes.add(method: .get, uri: "/", handler: handler)
-    routes.add(method: .get, uri: "/**",
-               handler: StaticFileHandler(documentRoot: "./webroot", allowResponseFilters: true).handleRequest)
+    routes.add(method: .get, uri: "/**", handler: StaticFileHandler(documentRoot: "./webroot", allowResponseFilters: true).handleRequest)
+    
     try HTTPServer.launch(name: "localhost",
                           port: 8181,
                           routes: routes,
                           responseFilters: [
-                            (PerfectHTTPServer.HTTPFilter.contentCompression(data: [:]), HTTPFilterPriority.high)])
+                            (PerfectHTTPServer.HTTPFilter.contentCompression(data: [:]), HTTPFilterPriority.high)
+                          ])
 } catch {
     fatalError("\(error)")
 }
