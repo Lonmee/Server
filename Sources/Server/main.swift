@@ -58,9 +58,8 @@ do {
     verRoutes.add(uris: ["/users", "/users/{id}"], handler: userHandler)
     // stories
     verRoutes.add(uris: ["/stories", "/stories/{id}"], handler: storyHandler)
+    
     apiRoutes.add(verRoutes)
-    
-    
     routes.add(apiRoutes)
     
     try HTTPServer.launch(name: "localhost",
