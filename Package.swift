@@ -11,12 +11,12 @@ let package = Package(
     dependencies: [
         .package(name: "PerfectHTTPServer", url: "https://github.com/PerfectlySoft/Perfect-HTTPServer.git", from: "3.0.23"),
         .package(name: "PerfectSQLite", url: "https://github.com/PerfectlySoft/Perfect-SQLite.git", from: "5.0.0"),
-        .package(name: "PerfectSessionSQLite", url: "https://github.com/PerfectlySoft/Perfect-Session-SQLite.git", from: "3.0.0"),
+//        .package(name: "PerfectSessionSQLite", url: "https://github.com/PerfectlySoft/Perfect-Session-SQLite.git", from: "3.1.0"),
     ],
     targets: [
         .target(
             name: "Server",
-            dependencies: ["PerfectHTTPServer", "PerfectSQLite", "PerfectSessionSQLite"]),
+            dependencies: ["PerfectHTTPServer", "PerfectSQLite"]),
         .testTarget(
             name: "ServerTests",
             dependencies: ["Server"]),
