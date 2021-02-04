@@ -11,6 +11,10 @@ let DB_PATH = "./db/database"
 var contentDict = [String: Any]()
 var page = 0
 
+func opration() -> Void {
+    print("db op")
+}
+
 func createTable() -> Void {
     do {
         let sqlite = try SQLite(DB_PATH)
@@ -53,3 +57,23 @@ func loadPageContent(forPage: Int) {
         print(error)
     }
 }
+
+//public struct Database<C: DatabaseConfigurationProtocol>: DatabaseProtocol {
+//    public typealias Configuration = C
+//    public let configuration: Configuration
+//    public init(configuration c: Configuration)
+//    public func table<T: Codable>(_ form: T.Type) -> Table<T, Database<C>>
+//    public func transaction<T>(_ body: () throws -> T) throws -> T
+//    public func create<A: Codable>(_ type: A.Type,
+//                                   primaryKey: PartialKeyPath<A>? = nil,
+//                                   policy: TableCreatePolicy = .defaultPolicy) throws -> Create<A, Self>
+//}
+//
+//public extension Table {
+//    func insert(_ instances: [Form]) throws -> Insert<Form, Table<A,C>>
+//    func insert(_ instance: Form) throws -> Insert<Form, Table<A,C>>
+//    func insert(_ instances: [Form], setKeys: PartialKeyPath<OverAllForm>, _ rest: PartialKeyPath<OverAllForm>...) throws -> Insert<Form, Table<A,C>>
+//    func insert(_ instance: Form, setKeys: PartialKeyPath<OverAllForm>, _ rest: PartialKeyPath<OverAllForm>...) throws -> Insert<Form, Table<A,C>>
+//    func insert(_ instances: [Form], ignoreKeys: PartialKeyPath<OverAllForm>, _ rest: PartialKeyPath<OverAllForm>...) throws -> Insert<Form, Table<A,C>>
+//    func insert(_ instance: Form, ignoreKeys: PartialKeyPath<OverAllForm>, _ rest: PartialKeyPath<OverAllForm>...) throws -> Insert<Form, Table<A,C>>
+//}
