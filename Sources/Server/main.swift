@@ -1,5 +1,6 @@
 import PerfectHTTP
 import PerfectHTTPServer
+import PerfectSession
 
 func rootHandler(request: HTTPRequest, response: HTTPResponse) {
     response.setHeader(.contentType, value: "text/html")
@@ -62,12 +63,18 @@ do {
     apiRoutes.add(verRoutes)
     routes.add(apiRoutes)
     
+    let sessionDriver = SessionMemoryDriver()
+    
     try HTTPServer.launch(name: "localhost",
                           port: 8181,
                           routes: routes,
+                          requestFilters: [
+                            sessionDriver.requestFilter,
+                          ],
                           responseFilters: [
                             (PerfectHTTPServer.HTTPFilter.contentCompression(data: [:]), HTTPFilterPriority.medium),
-                            (Filter404(), HTTPFilterPriority.high)
+                            (Filter404(), HTTPFilterPriority.high),
+                            sessionDriver.responseFilter,
                           ])
 } catch {
     fatalError("\(error)")
