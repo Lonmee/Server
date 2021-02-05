@@ -8,11 +8,11 @@ func rootHandler(request: HTTPRequest, response: HTTPResponse) {
 }
 
 func apiHandler(request: HTTPRequest, response: HTTPResponse) {
-        if authorized(request) {
-            response.next()
-        } else {
-            response.completed()
-        }
+    if authorized(request) {
+        response.next()
+    } else {
+        response.completed()
+    }
 }
 
 func authorized(_: HTTPRequest) -> Bool {
@@ -66,7 +66,8 @@ do {
                           port: 8181,
                           routes: routes,
                           responseFilters: [
-                            (PerfectHTTPServer.HTTPFilter.contentCompression(data: [:]), HTTPFilterPriority.high)
+                            (PerfectHTTPServer.HTTPFilter.contentCompression(data: [:]), HTTPFilterPriority.medium),
+                            (Filter404(), HTTPFilterPriority.high)
                           ])
 } catch {
     fatalError("\(error)")
