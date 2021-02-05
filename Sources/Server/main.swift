@@ -26,12 +26,21 @@ func verHandler(request: HTTPRequest, response: HTTPResponse) {
 
 func userHandler(request: HTTPRequest, response: HTTPResponse) {
     if let id = request.urlVariables["id"] {
-        print("do \(request.method) to user:\(id)")
+        print("do \(request.method) \nto user: \(id) \ntoken: \(request.session!.token) create: \(request.session!.created)")
     } else {
         print("do \(request.method) to users")
     }
     response.setHeader(.contentType, value: "text/html")
-    response.appendBody(string: "<html><title>PerfectHTTPServer</title><body>\(request.method):\(String(describing: request.urlVariables["id"]))</body></html>")
+    response.appendBody(string: """
+<html>
+<title>PerfectHTTPServer</title>
+<body>
+method: \(request.method)
+<br>id: \(request.urlVariables["id"]!)</br>
+token: \(request.session!.token)
+</body>
+</html>
+""")
     response.completed()
 }
 
@@ -42,7 +51,14 @@ func storyHandler(request: HTTPRequest, response: HTTPResponse) {
         print("do \(request.method) to stories")
     }
     response.setHeader(.contentType, value: "text/html")
-    response.appendBody(string: "<html><title>PerfectHTTPServer</title><body>\(request.method):\(String(describing: request.urlVariables["id"]))</body></html>")
+    response.appendBody(string: """
+<html>
+<title>PerfectHTTPServer</title>
+<body>
+\(request.method):\(String(describing: request.urlVariables["id"]))token: \(request.session!.token)
+</body>
+</html>
+""")
     response.completed()
 }
 
