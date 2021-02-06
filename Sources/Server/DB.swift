@@ -15,15 +15,43 @@ func opration() -> Void {
     print("db op")
 }
 
-func createTable() -> Void {
+func createTable(name: String) -> Void {
     do {
         let sqlite = try SQLite(DB_PATH)
         defer {
             sqlite.close()
         }
-        try sqlite.execute(statement: "CREATE TABLE IF NOT EXISTS demo (id INTEGER PRIMARY KEY NOT NULL, option TEXT NOT NULL, value TEXT)")
+        try sqlite.execute(statement: "CREATE TABLE IF NOT EXISTS \(name) (id INTEGER PRIMARY KEY NOT NULL, option TEXT NOT NULL, value TEXT)")
     } catch {
         print(error)
+    }
+}
+
+func read(bindValue: Int) -> Void {
+    do {
+        let sqlite = try SQLite(DB_PATH)
+        defer {
+            sqlite.close() // 此处确定关闭数据连接
+        }
+        
+        let demoStatement = "SELECT post_title, post_content FROM posts ORDER BY id DESC LIMIT :1"
+        
+        try sqlite.forEachRow(statement: demoStatement, doBindings: {
+            (statement: SQLiteStmt) -> () in
+            
+            let bindValue = 5
+            try statement.bind(position: 1, bindValue)
+            
+        }) {(statement: SQLiteStmt, i:Int) -> () in
+            
+            contentDict.merge([
+                "id": statement.columnText(position: 0),
+                "second_field": statement.columnText(position: 1),
+                "third_field": statement.columnText(position: 2)
+            ]) {_, new in new}
+        }
+    } catch {
+        // 错误处理
     }
 }
 
@@ -51,7 +79,7 @@ func loadPageContent(forPage: Int) {
             contentDict.merge([
                 "postContent": statement.columnText(position: 0),
                 "postTitle": statement.columnText(position: 1)
-            ]) { (_, new) in new }
+            ]) {_, new in new }
         }
     } catch {
         print(error)
