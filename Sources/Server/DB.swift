@@ -8,7 +8,7 @@
 import PerfectSQLite
 
 let DB_PATH = "./db/database"
-var contentDict = [String: Any]()
+var contentArr = [[String: Any]]()
 var page = 0
 
 func opration() -> Void {
@@ -24,6 +24,25 @@ func createTable(name: String) -> Void {
         try sqlite.execute(statement: "CREATE TABLE IF NOT EXISTS \(name) (id INTEGER PRIMARY KEY NOT NULL, option TEXT NOT NULL, value TEXT)")
     } catch {
         print(error)
+    }
+}
+
+func readAll(table: String) -> Void {
+    do {
+        let sqlite = try SQLite(DB_PATH)
+        defer {
+            sqlite.close() // 确保数据库连接已关闭
+        }
+        let statement = "SELECT * FROM \(table)"
+        try sqlite.forEachRow(statement: statement) {(statement: SQLiteStmt, i:Int) -> () in
+            contentArr.append([
+                "name": statement.columnText(position: 0),
+                "sex": statement.columnText(position: 1),
+                "age": statement.columnText(position: 2)
+            ])
+        }
+    } catch {
+        //处理错误
     }
 }
 
@@ -44,11 +63,11 @@ func read(bindValue: Int) -> Void {
             
         }) {(statement: SQLiteStmt, i:Int) -> () in
             
-            contentDict.merge([
+            contentArr.append([
                 "id": statement.columnText(position: 0),
                 "second_field": statement.columnText(position: 1),
                 "third_field": statement.columnText(position: 2)
-            ]) {_, new in new}
+            ])
         }
     } catch {
         // 错误处理
@@ -76,10 +95,10 @@ func loadPageContent(forPage: Int) {
             try statement.bind(position: 1, bindPage)
         }) {
             (statement: SQLiteStmt, i:Int) -> () in
-            contentDict.merge([
+            contentArr.append([
                 "postContent": statement.columnText(position: 0),
                 "postTitle": statement.columnText(position: 1)
-            ]) {_, new in new }
+            ])
         }
     } catch {
         print(error)
@@ -105,3 +124,19 @@ func loadPageContent(forPage: Int) {
 //    func insert(_ instances: [Form], ignoreKeys: PartialKeyPath<OverAllForm>, _ rest: PartialKeyPath<OverAllForm>...) throws -> Insert<Form, Table<A,C>>
 //    func insert(_ instance: Form, ignoreKeys: PartialKeyPath<OverAllForm>, _ rest: PartialKeyPath<OverAllForm>...) throws -> Insert<Form, Table<A,C>>
 //}
+
+
+//init(_:readOnly:)
+//close()
+//prepare(_:)
+//lastInsertRowID()
+//totalChanges()
+//changes()
+//errCode()
+//errMsg()
+//execute(_:)
+//execute(_:doBindings:)
+//execute(_:count:doBindings:)
+//doWithTransaction(_:)
+//forEachRow(_:handleRow:)
+//forEachRow(_:doBindings:handleRow

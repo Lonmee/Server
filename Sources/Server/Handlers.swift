@@ -35,7 +35,7 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
     if let id = request.urlVariables["id"] {
         print("do \(request.method) \nto user: \(id) \ntoken: \(request.session!.token) create: \(request.session!.created)")
     } else {
-        print("do \(request.method) to users")
+        readAll(table: "people")
     }
     response.setHeader(.contentType, value: "text/html")
     response.appendBody(string: """
@@ -43,8 +43,9 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
 <title>PerfectHTTPServer</title>
 <body>
 method: \(request.method)
-<br>id: \(request.urlVariables["id"]!)</br>
-token: \(request.session!.token)
+<br>id: \(String(describing: request.urlVariables["id"]))
+<br>token: \(request.session!.token)
+<br>data: \(contentArr)
 </body>
 </html>
 """)
