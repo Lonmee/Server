@@ -26,6 +26,7 @@ struct Contact: Codable {
 }
 
 struct UserCRUD: CRUD {
+    typealias ItemType = User
     let dbName = "db/database"
     let db: Database<SQLiteDatabaseConfiguration>
     
