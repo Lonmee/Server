@@ -41,7 +41,8 @@ struct UserCRUD: CRUD {
             self.userTable = db.table(User.self)
             self.contactTable = db.table(Contact.self)
             
-//            poplate()
+            // test only
+            //poplate()
         } catch {
             fatalError("Unresolved error \(error)")
         }
