@@ -8,10 +8,19 @@
 import PerfectHTTP
 import PerfectHTTPServer
 import PerfectSession
+import OAuth2
 
 func rootHandler(request: HTTPRequest, response: HTTPResponse) {
     response.setHeader(.contentType, value: "text/html")
-    response.appendBody(string: "<html><title>PerfectHTTP</title><body>Hello, PerfectHTTP!</body></html>")
+    response.appendBody(string: """
+<html>
+    <head>
+        <link rel="shortcut icon" href="favicon.ico" >
+    </head>
+    <title>PerfectHTTP</title>
+    <body>Hello, PerfectHTTP!</body>
+</html>
+""")
     response.completed()
 }
 
@@ -32,21 +41,33 @@ func verHandler(request: HTTPRequest, response: HTTPResponse) {
 }
 
 func userHandler(request: HTTPRequest, response: HTTPResponse) {
+    var data = [[String: Any]]();
     if let id = request.urlVariables["id"] {
         print("do \(request.method) \nto user: \(id) \ntoken: \(request.session!.token) create: \(request.session!.created)")
+        data = contentArr
     } else {
-        readAll(table: "people")
+        let crud = UserCRUD()
+        crud.update()
+        crud.read()
+        let parentCRUD = ParentCRUD()
+        do {
+            try parentCRUD.test()
+        } catch {
+            print(error)
+        }
     }
+    data = contentArr
+    
     response.setHeader(.contentType, value: "text/html")
     response.appendBody(string: """
 <html>
-<title>PerfectHTTPServer</title>
-<body>
-method: \(request.method)
-<br>id: \(String(describing: request.urlVariables["id"]))
-<br>token: \(request.session!.token)
-<br>data: \(contentArr)
-</body>
+    <title>PerfectHTTPServer</title>
+    <body>
+        method: \(request.method)
+        <br>id: \(String(describing: request.urlVariables["id"]))
+        <br>token: \(request.session!.token)
+        <br>data: \(data)
+    </body>
 </html>
 """)
     response.completed()
@@ -61,10 +82,10 @@ func storyHandler(request: HTTPRequest, response: HTTPResponse) {
     response.setHeader(.contentType, value: "text/html")
     response.appendBody(string: """
 <html>
-<title>PerfectHTTPServer</title>
-<body>
-\(request.method):\(String(describing: request.urlVariables["id"]))token: \(request.session!.token)
-</body>
+    <title>PerfectHTTPServer</title>
+    <body>
+        \(request.method):\(String(describing: request.urlVariables["id"]))token: \(request.session!.token)
+    </body>
 </html>
 """)
     response.completed()

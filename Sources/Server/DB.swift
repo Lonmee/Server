@@ -36,9 +36,10 @@ func readAll(table: String) -> Void {
         let statement = "SELECT * FROM \(table)"
         try sqlite.forEachRow(statement: statement) {(statement: SQLiteStmt, i:Int) -> () in
             contentArr.append([
-                "name": statement.columnText(position: 0),
-                "sex": statement.columnText(position: 1),
-                "age": statement.columnText(position: 2)
+                "id": statement.columnText(position: 0),
+                "name": statement.columnText(position: 1),
+                "sex": statement.columnText(position: 2),
+                "age": statement.columnText(position: 3)
             ])
         }
     } catch {
