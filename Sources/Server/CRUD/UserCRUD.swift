@@ -57,7 +57,9 @@ struct UserCRUD: CRUD {
         do {
             let query = try userTable.order(by: \.id)
                 .join(\.contact, on: \.id, equals: \.id)
-                .where(id == nil ? \User.id != UUID(uuidString: "00000000-0000-0000-0000-000000000000")! : \User.id == UUID(uuidString: id!)!)
+                .where(id == nil || id == "/" ?
+                        \User.id != UUID(uuidString: "00000000-0000-0000-0000-000000000000")! :
+                        \User.id == UUID(uuidString: id!)!)
                 .select()
             
             for user in query {
