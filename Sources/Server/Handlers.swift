@@ -47,8 +47,11 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
     var data = [User]()
     let id = request.urlVariables["id"]
     // request.session!.token
-    let users = [User(id: UUID(), name: "Lonmee", sex: true, age: 33, contact: Contact(phone: "1234", email: "1234", qq: "1234", wechat: "1234")),
-                 User(id: UUID(), name: "Lonmee", sex: true, age: 33, contact: Contact(phone: "1234", email: "1234", qq: "1234", wechat: "1234"))]
+    let uuid1 = UUID()
+    let uuid2 = UUID()
+    let users = [User(id: uuid1, name: "Lonmee", sex: true, age: 33, contact: [Contact(uid: uuid1, phone: "1234", email: "1234", qq: "1234", wechat: "1234"),
+                                                                               Contact(uid: uuid1, phone: "5678", email: "1234", qq: "1234", wechat: "1234")]),
+                 User(id: uuid2, name: "Lunar", sex: false, age: 33, contact: [Contact(uid: uuid2, phone: "1234", email: "1234", qq: "1234", wechat: "1234")])]
     response.setHeader(.contentType, value: "text/html")
     do {
         switch request.method {

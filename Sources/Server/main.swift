@@ -2,23 +2,24 @@ import PerfectHTTP
 import PerfectHTTPServer
 import PerfectSession
 
+
+var routes = Routes()
+// root
+routes.add(method: .get, uri: "/", handler: rootHandler)
+routes.add(method: .get, uri: "/**", handler: StaticFileHandler(documentRoot: "./webroot", allowResponseFilters: true).handleRequest)
+// api
+var apiRoutes = Routes(baseUri: "/api", handler: apiHandler)
+// version
+var verRoutes = Routes(baseUri: "/v1", handler: verHandler)
+// users
+verRoutes.add(uris: ["/users", "/users/{id}"], handler: userHandler)
+
+apiRoutes.add(verRoutes)
+routes.add(apiRoutes)
+
+let sessionDriver = SessionMemoryDriver()
+
 do {
-    var routes = Routes()
-    // root
-    routes.add(method: .get, uri: "/", handler: rootHandler)
-    routes.add(method: .get, uri: "/**", handler: StaticFileHandler(documentRoot: "./webroot", allowResponseFilters: true).handleRequest)
-    // api
-    var apiRoutes = Routes(baseUri: "/api", handler: apiHandler)
-    // ver
-    var verRoutes = Routes(baseUri: "/v1", handler: verHandler)
-    // users
-    verRoutes.add(uris: ["/users", "/users/{id}"], handler: userHandler)
-    
-    apiRoutes.add(verRoutes)
-    routes.add(apiRoutes)
-    
-    let sessionDriver = SessionMemoryDriver()
-    
     try HTTPServer.launch(name: "localhost",
                           port: 8181,
                           routes: routes,

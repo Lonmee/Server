@@ -14,10 +14,11 @@ struct User: Codable {
     let name: String
     let sex: Bool
     let age: Int
-    let contact: Contact?
+    let contact: [Contact]?
 }
 
 struct Contact: Codable {
+    let uid: UUID
     let phone: String
     let email: String
     let qq: String
@@ -35,7 +36,7 @@ struct UserCRUD: CRUD {
     init() {
         do {
             self.db = Database(configuration: try SQLiteDatabaseConfiguration(dbName))
-            try db.create(User.self, policy: .dropTable)
+            try db.create(User.self, primaryKey: \.id, policy: .defaultPolicy)
             
             self.userTable = db.table(User.self)
             self.contactTable = db.table(Contact.self)
@@ -45,9 +46,16 @@ struct UserCRUD: CRUD {
     }
     
     func create(_ users: [User]) throws -> [User] {
-//        try contactTable.index(\.id)
-//        try userTable.insert(users, setKeys: .id, .name, .sex, .age)
-//        try contactTable.insert(users, setKeys: .id, .phone, .email, .qq, .wechat)
+        let tUsers = users.map { u in
+            User(id: u.id, name: u.name, sex: u.sex, age: u.age, contact: nil)
+        }
+        let cUsers = users.map { u in
+            u.contact
+        }
+        try userTable.insert(tUsers)
+        for cs in cUsers {
+            try contactTable.insert(cs!)
+        }
         return users
     }
     
@@ -55,6 +63,7 @@ struct UserCRUD: CRUD {
         var data = [User]()
         do {
             let query = try userTable.order(by: \.id)
+                .join(\.contact, on: \.id, equals: \.uid)
                 .where(id == nil || id == "/" ?
                         \User.id != UUID(uuidString: "00000000-0000-0000-0000-000000000000")! :
                         \User.id == UUID(uuidString: id!)!)
