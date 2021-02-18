@@ -36,7 +36,7 @@ struct UserCRUD: CRUD {
     init() {
         do {
             self.db = Database(configuration: try SQLiteDatabaseConfiguration(dbName))
-            try db.create(User.self, primaryKey: \.id, policy: .defaultPolicy)
+            try db.create(User.self, primaryKey: \.id, policy: .dropTable)
             
             self.userTable = db.table(User.self)
             self.contactTable = db.table(Contact.self)
