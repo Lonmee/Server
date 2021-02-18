@@ -13,8 +13,6 @@ do {
     var verRoutes = Routes(baseUri: "/v1", handler: verHandler)
     // users
     verRoutes.add(uris: ["/users", "/users/{id}"], handler: userHandler)
-    // stories
-    verRoutes.add(uris: ["/stories", "/stories/{id}"], handler: storyHandler)
     
     apiRoutes.add(verRoutes)
     routes.add(apiRoutes)

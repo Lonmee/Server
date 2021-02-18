@@ -14,11 +14,10 @@ struct User: Codable {
     let name: String
     let sex: Bool
     let age: Int
-    let contact: [Contact]?
+    let contact: Contact?
 }
 
 struct Contact: Codable {
-    let id: UUID
     let phone: String
     let email: String
     let qq: String
@@ -36,27 +35,26 @@ struct UserCRUD: CRUD {
     init() {
         do {
             self.db = Database(configuration: try SQLiteDatabaseConfiguration(dbName))
-            try db.create(User.self, policy: .defaultPolicy)
+            try db.create(User.self, policy: .dropTable)
             
             self.userTable = db.table(User.self)
             self.contactTable = db.table(Contact.self)
-            
-            // test only
-            //poplate()
         } catch {
             fatalError("Unresolved error \(error)")
         }
     }
     
-    func create(_ id: String?) {
-        print("create")
+    func create(_ users: [User]) throws -> [User] {
+//        try contactTable.index(\.id)
+//        try userTable.insert(users, setKeys: .id, .name, .sex, .age)
+//        try contactTable.insert(users, setKeys: .id, .phone, .email, .qq, .wechat)
+        return users
     }
     
     func retrieve(_ id: String?) -> [User] {
         var data = [User]()
         do {
             let query = try userTable.order(by: \.id)
-                .join(\.contact, on: \.id, equals: \.id)
                 .where(id == nil || id == "/" ?
                         \User.id != UUID(uuidString: "00000000-0000-0000-0000-000000000000")! :
                         \User.id == UUID(uuidString: id!)!)
@@ -71,29 +69,13 @@ struct UserCRUD: CRUD {
         return data
     }
     
-    func update(_ id: String? = "") -> Void {
+    func update(_ id: String? = "") -> [User] {
         print("update")
+        return [User]()
     }
     
-    func delete(_ id: String? = "") -> Void {
+    func delete(_ id: String? = "") -> [User] {
         print("delete")
-    }
-    
-    func poplate() -> Void {
-        do {
-            try contactTable.index(\.id)
-            let a = User(id: UUID(), name: "Lonmee", sex: true, age: 39, contact: nil)
-            let b = User(id: UUID(), name: "She", sex: false, age: 38, contact: nil)
-            let c = User(id: UUID(), name: "Lunar", sex: false, age: 38, contact: nil)
-            
-            try userTable.insert([a, b, c])
-            try contactTable.insert([
-                Contact(id: a.id, phone: "13811005415", email: "lonmee@126.com", qq: "25824892", wechat: "25824892"),
-                Contact(id: b.id, phone: "13426431514", email: "WSX_hz@126.com", qq: "25824892", wechat: "25824892"),
-                Contact(id: c.id, phone: "13426431514", email: "lunar@126.com", qq: "25824892", wechat: "25824892"),
-            ])
-        } catch {
-            print(error)
-        }
+        return [User]()
     }
 }
