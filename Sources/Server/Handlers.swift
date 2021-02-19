@@ -56,11 +56,11 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
             let users = try decoder.decode([User].self, from: json)
             data = try userCrud.create(users)
         case .get:
-            data = userCrud.retrieve(id)
+            data = try userCrud.retrieve(id)
         case .patch:
-            data = userCrud.update(id)
+            data = try userCrud.update(id)
         case .delete:
-            data = userCrud.delete(id)
+            data = try userCrud.delete(id)
         default:
             print(request.method)
         }

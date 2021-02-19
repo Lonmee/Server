@@ -36,7 +36,7 @@ struct UserCRUD: CRUD {
     init() {
         do {
             self.db = Database(configuration: try SQLiteDatabaseConfiguration(dbName))
-            try db.create(User.self, primaryKey: \.id, policy: .dropTable)
+            try db.create(User.self, primaryKey: \.id, policy: .defaultPolicy)
             
             self.userTable = db.table(User.self)
             self.contactTable = db.table(Contact.self)
@@ -59,32 +59,44 @@ struct UserCRUD: CRUD {
         return users
     }
     
-    func retrieve(_ id: String?) -> [User] {
+    func retrieve(_ id: String?) throws -> [User] {
         var data = [User]()
-        do {
+        if let uuid = UUID(uuidString: id ?? "") {
             let query = try userTable.order(by: \.id)
                 .join(\.contact, on: \.id, equals: \.uid)
-                .where(id == nil || id == "/" ?
-                        \User.id != UUID(uuidString: "00000000-0000-0000-0000-000000000000")! :
-                        \User.id == UUID(uuidString: id!)!)
+                .where(\User.id == uuid)
                 .select()
-            
-            for user in query {
-                data.append(user)
-            }
-        } catch {
-            print(error)
+            data = query.map({ $0 })
+        } else {
+            let query = try userTable.order(by: \.id)
+                .join(\.contact, on: \.id, equals: \.uid)
+                .select()
+            data = query.map({ $0 })
         }
         return data
     }
     
-    func update(_ id: String? = "") -> [User] {
+    func update(_ id: String?) throws -> [User] {
         print("update")
         return [User]()
     }
     
-    func delete(_ id: String? = "") -> [User] {
-        print("delete")
+    func delete(_ id: String?) throws -> [User] {
+        if let uuid = UUID(uuidString: id ?? "") {
+            let uQuery = userTable.where(\User.id == uuid)
+            let cQuery = contactTable.where(\Contact.uid == uuid)
+            try uQuery.delete()
+            try cQuery.delete()
+        } else {
+            throw NoParaError("no id no action")
+        }
         return [User]()
+    }
+}
+
+struct NoParaError: CustomNSError {
+    var errorCode: Int = 800
+    var errorUserInfo: [String : Any] = ["reason": "no id no action"]
+    init(_ reason: String) {
     }
 }
