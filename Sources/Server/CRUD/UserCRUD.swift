@@ -12,17 +12,17 @@ import PerfectCRUD
 struct User: Codable {
     let id: UUID
     let name: String
-    let sex: Bool
-    let age: Int
+    let sex: Bool?
+    let age: Int?
     let contact: [Contact]?
 }
 
 struct Contact: Codable {
     let uid: UUID
-    let phone: String
-    let email: String
-    let qq: String
-    let wechat: String
+    let phone: String?
+    let email: String?
+    let qq: String?
+    let wechat: String?
 }
 
 struct UserCRUD: CRUD {
@@ -76,9 +76,27 @@ struct UserCRUD: CRUD {
         return data
     }
     
-    func update(_ id: String?) throws -> [User] {
-        print("update")
-        return [User]()
+    func update(_ users: [User]) throws -> [User] {
+        let tUsers = users.map { u in
+            User(id: u.id, name: u.name, sex: u.sex, age: u.age, contact: nil)
+        }
+        let cUsers = users.map { u in
+            u.contact
+        }
+        for u in tUsers {
+            try userTable.order(by: \User.id)
+                .where(\User.id == u.id)
+                .update(u, ignoreKeys: \.id)
+            try contactTable.order(by: \.uid)
+                .where(\Contact.uid == u.id)
+                .delete()
+        }
+        for cs in cUsers {
+            if (cs != nil && cs!.count > 0) {
+                try contactTable.insert(cs!)
+            }
+        }
+        return users
     }
     
     func delete(_ id: String?) throws -> [User] {

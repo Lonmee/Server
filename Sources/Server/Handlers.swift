@@ -58,7 +58,10 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
         case .get:
             data = try userCrud.retrieve(id)
         case .patch:
-            data = try userCrud.update(id)
+            let json = request.param(name: "content")!.data(using: .utf8)!
+            let decoder = JSONDecoder()
+            let users = try decoder.decode([User].self, from: json)
+            data = try userCrud.update(users)
         case .delete:
             data = try userCrud.delete(id)
         default:
