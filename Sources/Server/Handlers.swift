@@ -10,6 +10,7 @@ import PerfectHTTPServer
 import PerfectSession
 import OAuth2
 import Foundation
+import PerfectLib
 
 func rootHandler(request: HTTPRequest, response: HTTPResponse) {
     response.setHeader(.contentType, value: "text/html")
@@ -47,7 +48,6 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
     var data = [User]()
     let id = request.urlVariables["id"]
     // request.session!.token
-    response.setHeader(.contentType, value: "text/html")
     do {
         switch request.method {
         case .post:
@@ -67,17 +67,7 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
         default:
             print(request.method)
         }
-        response.appendBody(string: """
-    <html>
-        <title>PerfectHTTPServer</title>
-        <body>
-            method: \(request.method)
-            <br>id: \(String(describing: request.urlVariables["id"]))
-            <br>token: \(request.session!.token)
-            <br>data: \(data)
-        </body>
-    </html>
-    """)
+        try response.setBody(json: data, encoder: JSONEncoder())
     } catch {
         response.setHeader(.contentType, value: "text/html")
         response.appendBody(string: """

@@ -83,17 +83,19 @@ struct UserCRUD: CRUD {
         let cUsers = users.map { u in
             u.contact
         }
-        for u in tUsers {
-            try userTable.order(by: \User.id)
-                .where(\User.id == u.id)
-                .update(u, ignoreKeys: \.id)
-            try contactTable.order(by: \.uid)
-                .where(\Contact.uid == u.id)
-                .delete()
-        }
-        for cs in cUsers {
-            if (cs != nil && cs!.count > 0) {
-                try contactTable.insert(cs!)
+        try db.transaction {
+            for u in tUsers {
+                try userTable.order(by: \User.id)
+                    .where(\User.id == u.id)
+                    .update(u, ignoreKeys: \.id)
+                try contactTable.order(by: \.uid)
+                    .where(\Contact.uid == u.id)
+                    .delete()
+            }
+            for cs in cUsers {
+                if (cs != nil && cs!.count > 0) {
+                    try contactTable.insert(cs!)
+                }
             }
         }
         return users
