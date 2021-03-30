@@ -1,6 +1,6 @@
 # Server
 
-A test of PerfectHTTP .
+A demo of PerfectHTTP .
 
 routes:
 web: http://localhost:8181/
