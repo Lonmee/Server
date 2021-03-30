@@ -47,6 +47,7 @@ var userCrud = UserCRUD()
 func userHandler(request: HTTPRequest, response: HTTPResponse) {
     var data = [User]()
     let id = request.urlVariables["id"]
+    let name = request.param(name: "name", defaultValue: "")
     // request.session!.token
     do {
         switch request.method {
@@ -56,7 +57,7 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
             let users = try decoder.decode([User].self, from: json)
             data = try userCrud.create(users)
         case .get:
-            data = try userCrud.retrieve(id)
+            data = name!.isEmpty ? try userCrud.retrieve(id) : try userCrud.retrieve(name: name)
         case .patch:
             let json = request.param(name: "content")!.data(using: .utf8)!
             let decoder = JSONDecoder()

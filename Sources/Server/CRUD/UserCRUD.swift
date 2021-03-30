@@ -76,6 +76,14 @@ struct UserCRUD: CRUD {
         return data
     }
     
+    func retrieve(name: String?) throws -> [User] {
+        let query = try userTable.order(by: \.name)
+            .join(\.contact, on: \.id, equals: \.uid)
+            .where(\User.name == name!)
+            .select()
+        return query.map({ $0 })
+    }
+    
     func update(_ users: [User]) throws -> [User] {
         let tUsers = users.map { u in
             User(id: u.id, name: u.name, sex: u.sex, age: u.age, contact: nil)
