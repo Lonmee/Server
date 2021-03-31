@@ -2,7 +2,6 @@ import PerfectHTTP
 import PerfectHTTPServer
 import PerfectSession
 
-
 var routes = Routes()
 // root
 routes.add(method: .get, uri: "/", handler: rootHandler)

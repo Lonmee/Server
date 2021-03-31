@@ -35,7 +35,7 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
         default:
             print(request.method)
         }
-        try response.setBody(json: data)
+        try response.setBody(json: data, encoder: JSONEncoder())
         response.completed()
     } catch {
         completeResponseWithError(request: request, response: response, error: error)
