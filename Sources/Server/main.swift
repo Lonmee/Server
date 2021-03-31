@@ -13,7 +13,8 @@ var apiRoutes = Routes(baseUri: "/api", handler: apiHandler)
 var verRoutes = Routes(baseUri: "/v1", handler: verHandler)
 // users
 verRoutes.add(uris: ["/users", "/users/{id}"], handler: userHandler)
-
+// login
+verRoutes.add(uris: ["/login/{id}"], handler: loginHandler)
 apiRoutes.add(verRoutes)
 routes.add(apiRoutes)
 
