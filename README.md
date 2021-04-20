@@ -11,3 +11,4 @@ db: sqlite3 @../Build/Products/Debug/db
 [GET] no uuid for all
 [POST] [PATCH] [DELETE] uuid required
 
+for
