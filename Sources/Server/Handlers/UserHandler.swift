@@ -15,7 +15,7 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
     do {
         switch request.method {
         case .post:
-            let json = request.param(name: "content")!.data(using: .utf8)!
+            let json = request.postBodyString!.data(using: .utf8)!
             let decoder = JSONDecoder()
             let users = try decoder.decode([User].self, from: json)
             data = try userCrud.create(users)
@@ -24,7 +24,7 @@ func userHandler(request: HTTPRequest, response: HTTPResponse) {
             let name = request.param(name: "name", defaultValue: "")
             data = name!.isEmpty ? try userCrud.retrieve(id) : try userCrud.retrieve(name: name)
         case .patch:
-            let json = request.param(name: "content")!.data(using: .utf8)!
+            let json = request.postBodyString!.data(using: .utf8)!
             let decoder = JSONDecoder()
             let users = try decoder.decode([User].self, from: json)
             data = try userCrud.update(users)

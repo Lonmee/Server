@@ -13,7 +13,7 @@ func rootHandler(request: HTTPRequest, response: HTTPResponse) {
     response.appendBody(string: """
 <html>
     <head>
-        <link rel="shortcut icon" href="favicon.ico" >
+        <link rel="shortcut icon" href="favicon.ico">
     </head>
     <title>PerfectHTTP</title>
     <body>Hello, PerfectHTTP!</body>
